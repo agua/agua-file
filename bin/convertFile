@@ -1,0 +1,99 @@
+#!/usr/bin/perl -w
+
+BEGIN {
+    my $installdir = $ENV{'installdir'} || "/a";
+    unshift(@INC, "$installdir/extlib/lib/perl5");
+    unshift(@INC, "$installdir/extlib/lib/perl5/x86_64-linux-gnu-thread-multi/");
+    unshift(@INC, "$installdir/lib");
+}
+
+=head2 APPLICATION convertFile
+
+=head2 PURPOSE Convert file formats
+
+=head2 USAGE
+
+ convertFile \
+ <--inputfile String> \
+ <--outputfile String> \
+ <--from String> \
+ <--to String> \
+ [--help]
+
+ --inputfile  : Input file location
+ --outputfile : Output file location
+ --from       : Input file format (yaml|json)
+ --to         : Output file format (json|yaml)
+ --help       :    print help info
+
+=head2 EXAMPLES
+
+ cd biorepodev/syoung
+ /a/bin/util/convertFile --from json --to yaml --inputfile agua/agua.ops --outputfile agua/agua.ops.yaml
+
+=cut
+
+use strict;
+
+#### USE LIBRARY
+use FindBin qw($Bin);
+use lib "$Bin/../../lib";
+use Getopt::Long;
+use Term::ANSIColor qw(:constants);
+
+#### INTERNAL MODULES
+use Conf::Yaml;
+use File::Convert;
+
+#### GET OPTIONS
+my $log 		= 	2;
+my $printlog 	= 	5;
+my $from;
+my $to;
+my $inputfile;
+my $outputfile;
+my $help;
+GetOptions (
+	'from=s' 	    => \$from,
+	'to=s' 	        => \$to,
+	'inputfile=s' 	=> \$inputfile,
+	'outputfile=s' 	=> \$outputfile,
+
+	'log=i' 		=> \$log,
+	'printlog=i' 	=> \$printlog,
+	'help'          => \$help) or die "No options specified. Try '--help'\n";
+if ( defined $help )	{	usage();	}
+
+#### SET CONF FILE
+my $installdir  =   $ENV{'installdir'} || "/a";
+my $configfile  =   "$installdir/conf/config.yml";
+my ($script)	=	$0	=~	/([^\.^\/]+)/;
+my $logfile 	= "/tmp/$script.$$.log";
+
+my $conf = Conf::Yaml->new(
+    memory      =>  1,
+    inputfile	=>	$configfile,
+    log         =>  2,
+    printlog    =>  2,
+    logfile     =>  $logfile
+);
+
+my $object = File::Convert->new(
+    conf        =>  $conf,
+    log         =>  $log,
+    printlog    =>  $printlog
+);
+$object->convert($inputfile, $outputfile, $from, $to);
+
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+#                                    SUBROUTINES
+#:::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
+
+
+sub usage {
+    print GREEN;
+    print `perldoc $0`;
+    print RESET;
+    exit;
+}
+

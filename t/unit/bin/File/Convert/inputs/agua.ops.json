@@ -1,0 +1,25 @@
+{
+   "name" : "agua",
+   "website" : "http://www.aguadev.org",
+   "type" : "application",
+   "owner" : "agua",
+   "package" : "agua",
+   "publication" : {},
+   "source" : "git",
+   "description" : "A cloud bioinformatics workflow platform for next-generation sequencing",
+   "privacy" : "public",
+   "installtype" : "ops",
+   "authors" : [
+      "Young Stuart"
+   ],
+   "repository" : "agua",
+   "hubtype" : "github",
+   "keywords" : [
+      "bioinformatics",
+      "workflows",
+      "cloud",
+      "next-generation",
+      "sequencing",
+      "analysis"
+   ]
+}
